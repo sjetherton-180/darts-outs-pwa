@@ -2,6 +2,9 @@
 
 <html lang="en">
 <head>
+  <link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#121212" />
+<link rel="icon" href="icons/icon-192.png" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Darts Outs Trainer — Advanced</title>
@@ -221,5 +224,10 @@ function saveStat(correct){ const key='darts_stats_v1'; const data = JSON.parse(
 
 // init
 newTarget();
+    <script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 </script></body>
 </html>
