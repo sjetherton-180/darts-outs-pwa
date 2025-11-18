@@ -2,7 +2,7 @@ const CACHE_NAME = 'darts-outs-cache-v1';
 const urlsToCache = [
   './',
   './index.html',
-  './Manifest/manifest.json',
+  './manifest/manifest.json',
   './Icons/192.png',
   './Icons/512.png',
   './style.css',    // if you have CSS
