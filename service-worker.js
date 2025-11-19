@@ -1,39 +1,21 @@
-const CACHE_NAME = "darts-outs-cache-v1";
-const ASSETS = [
+const CACHE = "cm170-v1";
+const FILES = [
   "/",
   "/index.html",
-  "/manifest.json",
-  "/service-worker.js",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/maskable-icon-512.png"
+  "/css/styles.css",
+  "/js/app.js",
+  "/js/dartboard.js",
+  "/js/checkout.js",
+  "/js/pwa.js",
+  "/manifest.json"
 ];
 
-// Install event
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)));
 });
 
-// Activate event
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    )
-  );
-});
-
-// Fetch event
 self.addEventListener("fetch", event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then(cached => cached || fetch(event.request))
   );
 });
