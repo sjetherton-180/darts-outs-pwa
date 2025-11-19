@@ -1,233 +1,64 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#121212" />
-<link rel="icon" href="icons/icon-192.png" />
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Darts Outs Trainer — Advanced</title>
-<style>
-  :root{--bg:#071021;--card:#0b1220;--accent:#ffd166;--muted:#94a3b8;--red:#ef4444;--green:#16a34a}
-  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#071021 0%, #07142a 100%);color:#e6eef8;padding:18px;display:flex;justify-content:center}
-  .app{width:100%;max-width:1100px}
-  header{display:flex;align-items:center;gap:12px}
-  h1{margin:0;font-size:20px}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  button, select{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
-  .layout{display:grid;grid-template-columns:380px 1fr;gap:16px}
-  .card{background:var(--card);padding:14px;border-radius:12px}
-  .board{display:flex;flex-direction:column;gap:6px;align-items:center}
-  .ring{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:320px}
-  .seg{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);text-align:center;cursor:pointer;user-select:none;transition:transform .18s, box-shadow .18s}
-  .seg:active{transform:scale(.96)}
-  .triple{background:linear-gradient(90deg,#1e7a5a,#0b5);color:#022}
-  .double{background:linear-gradient(90deg,#9b2d2d,#c33);color:#fff}
-  .single{background:linear-gradient(90deg,#ddd,#bbb);color:#111}
-  .bull{background:radial-gradient(circle at 50% 50%, #ffd166 0%, #eab308 40%);color:#111;font-weight:700}
-  .dbull{background:radial-gradient(circle at 50% 50%, #ef4444 0%, #9b1c1c 60%);color:#fff;font-weight:800}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .info{font-size:14px;color:var(--muted)}
-  .log{background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;min-height:80px}
-  .outs{margin-top:10px}
-  .correct{color:var(--green);font-weight:700}
-  .wrong{color:var(--red);font-weight:700}
-  .highlight{box-shadow:0 0 18px 6px rgba(255,209,102,0.14), inset 0 0 6px rgba(255,209,102,0.06);transform:translateY(-4px)}
-  .fade{opacity:.35}
-  @media(max-width:980px){.layout{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Darts Outs Trainer</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" href="/icons/icon-192.png" sizes="192x192">
+  <link rel="icon" href="/icons/icon-512.png" sizes="512x512">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#121212">
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js")
+          .catch(err => console.error("SW registration failed:", err));
+      });
+    }
+  </script>
+
+  <style>
+    body {
+      background: #121212;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 40px;
+      font-size: 2rem;
+    }
+
+    .container {
+      margin-top: 40px;
+      padding: 20px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+  </style>
 </head>
+
 <body>
-  <div class="app">
-    <header>
-      <h1>Darts Outs Trainer — Advanced</h1>
-      <div style="margin-left:auto;color:var(--muted)">Click board wedges to choose your checkout route</div>
-    </header><div class="controls">
-  <label>Start (max)
-    <input id="startScore" type="number" min="2" max="501" value="170" style="width:90px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
-  </label>
-  <button id="newBtn">New Target</button>
-  <button id="revealBtn">Reveal Standard Out(s)</button>
-  <button id="checkBtn">Check My Route</button>
-  <button id="undoBtn">Undo</button>
-  <button id="clearBtn">Clear</button>
-  <label style="align-self:center;color:var(--muted)">Strategy:</label>
-  <select id="strategy">
-    <option value="standard">Standard</option>
-    <option value="bull-first">Bull-first</option>
-    <option value="treble-first">Treble-first</option>
-  </select>
-</div>
 
-<div class="layout">
-  <div class="card">
-    <div style="font-size:48px;font-weight:700;text-align:center" id="targetDisplay">—</div>
-    <div style="text-align:center;color:var(--muted);margin-bottom:10px">Remaining: <span id="remaining">—</span></div>
+  <h1>Darts Outs Trainer</h1>
 
-    <div class="board card">
-      <div class="ring" id="doubleRing"></div>
-      <div class="ring" id="singleOuter"></div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div style="width:160px">
-          <div id="tripleRing" class="ring"></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div id="dbull" class="seg dbull">DB</div>
-          <div id="sbull" class="seg bull">SB</div>
-          <div id="miss" class="seg" style="background:transparent;border:1px dashed rgba(255,255,255,0.04);">Miss</div>
-        </div>
-      </div>
-
-      <div style="margin-top:8px;width:100%">
-        <div style="font-weight:700;margin-bottom:4px">Your selection (click segments)</div>
-        <div id="selection" class="log">(no darts yet)</div>
-      </div>
-
-      <div style="margin-top:8px;width:100%">
-        <div style="font-weight:700;margin-bottom:4px">Standard suggested out(s)</div>
-        <div id="standardOut" class="log">(press Reveal)</div>
-      </div>
-    </div>
+  <div class="container">
+    <p>Welcome to your PWA!<br>This is the shell of the app — add your interactive dartboard and checkout trainer here.</p>
   </div>
 
-  <div class="card">
-    <h3 style="margin-top:0">How it works</h3>
-    <div class="info">Random checkout generated (2–170). Click segments to propose a checkout (up to 3 darts). Use <strong>Reveal</strong> to see standard routes based on chosen strategy. <strong>Check</strong> compares your picks and highlights differences.</div>
-
-    <h4 style="margin-top:12px">Extra features</h4>
-    <ul style="color:var(--muted)">
-      <li>Multiple standard routes supported.</li>
-      <li>Strategy modes: Standard, Bull-first, Treble-first.</li>
-      <li>Intermediate scoring: remaining after each selected dart.</li>
-      <li>Animated highlighting of standard route on the board.</li>
-      <li>Local stats saved to localStorage (progress tracking).</li>
-    </ul>
-
-    <div style="margin-top:12px">
-      <div style="font-weight:700">Game log</div>
-      <div id="gamelog" class="log"></div>
-    </div>
-  </div>
-</div>
-
-  </div><script>
-// Dartboard order
-const order = [20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
-// Build throws
-const throwsList = [];
-for(let n of order){ throwsList.push({name:'D'+n,value:2*n,isDouble:true,slot:n}); }
-for(let n of order){ throwsList.push({name:'S'+n,value:n,isDouble:false,slot:n}); }
-for(let n of order){ throwsList.push({name:'T'+n,value:3*n,isDouble:false,slot:n}); }
-throwsList.push({name:'SB',value:25,isDouble:false}); throwsList.push({name:'DB',value:50,isDouble:true});
-
-// Expanded standardOuts: each entry may be an array of possible routes (route = array of names)
-const standardOuts = {
-  170:[['T20','T20','DB']],167:[['T20','T19','DB']],164:[['T20','T18','DB']],161:[['T20','T17','DB']],160:[['T20','T20','D20']],
-  158:[['T20','T20','D19']],157:[['T20','T19','D20']],156:[['T20','T20','D18']],155:[['T20','T19','D19']],154:[['T20','T18','D20']],
-  153:[['T20','T19','D18']],152:[['T20','T20','D16']],151:[['T20','T17','D20']],150:[['T20','T20','D15']],149:[['T20','T19','D16']],
-  148:[['T20','T16','D20']],147:[['T20','T17','D18']],146:[['T20','T18','D16']],145:[['T20','T15','D20']],144:[['T20','T20','D12']],
-  143:[['T20','T17','D16']],142:[['T20','T14','D20']],141:[['T20','T19','D12']],140:[['T20','T20','D10']],139:[['T20','T13','D20']],
-  138:[['T20','T18','D12']],137:[['T20','T19','D10']],136:[['T20','T20','D8']],135:[['T20','T15','D15']],134:[['T20','T14','D16']],
-  133:[['T20','T19','D8']],132:[['T20','T16','D12']],131:[['T20','T13','D16']],130:[['T20','T18','D8']],129:[['T19','T16','D12']],
-  128:[['T18','T14','D16']],127:[['T20','T17','D8']],126:[['T19','T19','D6']],125:[['T20','T15','D10']],124:[['T20','T16','D8']],
-  123:[['T19','T16','D9']],122:[['T18','T20','D4']],121:[['T20','T11','D14']],120:[['T20','20','D20']],119:[['T19','T10','D16']],
-  118:[['T20','T18','D2']],117:[['T20','T19','D?']],116:[['T20','T20','D8']],115:[['T20','T15','D10']],114:[['T20','T14','D12']],
-  113:[['T20','T13','D12']],112:[['T20','T12','D16']],111:[['T20','T17','D5']],110:[['T20','T10','D20']],109:[['T20','T19','D?']],
-  // Many common 2-dart and 1-dart finishes
-  100:[['T20','D20']], 80:[['T16','D16']], 50:[['DB']], 40:[['D20']], 32:[['D16']], 20:[['D10']],
-  60:[['20','D20']], 58:[['20','D19']], 54:[['18','D18']], 36:[['D18']], 52:[['20','D16']], 46:[['14','D16']],
-  34:[['D17']], 16:[['D8']], 8:[['D4']], 4:[['D2']], 2:[['D1']]
-};
-
-// For entries with unknowns (like 'D?') or missing entries we'll fall back to computeOuts
-function computeOuts(n){
-  const candidates = throwsList.slice();
-  const outs = [];
-  for(let a of candidates){ if(a.value === n && a.isDouble) outs.push([a]); }
-  for(let a of candidates){ for(let b of candidates){ if(a.value + b.value === n && b.isDouble) outs.push([a,b]); }}
-  for(let a of candidates){ for(let b of candidates){ for(let c of candidates){ if(a.value + b.value + c.value === n && c.isDouble) outs.push([a,b,c]); }}}
-  // format unique
-  const uniq = new Set(); const formatted = [];
-  for(let combo of outs){ const s = combo.map(x=>x.name).join(','); if(!uniq.has(s)){ uniq.add(s); formatted.push(combo.map(x=>x.name)); }}
-  formatted.sort((a,b)=>a.length-b.length);
-  return formatted;
-}
-
-// UI state & refs
-let target=null, remaining=null, selection=[]; const targetDisplay=document.getElementById('targetDisplay'); const remainingEl=document.getElementById('remaining'); const selectionEl=document.getElementById('selection'); const standardOutEl=document.getElementById('standardOut'); const gamelog=document.getElementById('gamelog'); const strategySel=document.getElementById('strategy');
-
-// Build board UI
-const doubleRing=document.getElementById('doubleRing'); const singleOuter=document.getElementById('singleOuter'); const tripleRing=document.getElementById('tripleRing');
-for(let n of order){ const el=document.createElement('div'); el.className='seg double'; el.textContent='D'+n; el.dataset.name='D'+n; el.dataset.value=2*n; el.addEventListener('click',()=>pick(el.dataset.name,parseInt(el.dataset.value),true)); doubleRing.appendChild(el);} 
-for(let n of order){ const el=document.createElement('div'); el.className='seg single'; el.textContent='S'+n; el.dataset.name='S'+n; el.dataset.value=n; el.addEventListener('click',()=>pick(el.dataset.name,parseInt(el.dataset.value),false)); singleOuter.appendChild(el);} 
-for(let n of order){ const el=document.createElement('div'); el.className='seg triple'; el.textContent='T'+n; el.dataset.name='T'+n; el.dataset.value=3*n; el.addEventListener('click',()=>pick(el.dataset.name,parseInt(el.dataset.value),false)); tripleRing.appendChild(el);} 
-document.getElementById('dbull').addEventListener('click',()=>pick('DB',50,true)); document.getElementById('sbull').addEventListener('click',()=>pick('SB',25,false)); document.getElementById('miss').addEventListener('click',()=>pick('Miss',0,false));
-
-// Controls
-document.getElementById('newBtn').addEventListener('click',newTarget); document.getElementById('revealBtn').addEventListener('click',revealStandard); document.getElementById('checkBtn').addEventListener('click',checkRoute); document.getElementById('undoBtn').addEventListener('click',undo); document.getElementById('clearBtn').addEventListener('click',clearSelection);
-
-function newTarget(){ const max=Math.min(parseInt(document.getElementById('startScore').value)||170,170); const val=Math.floor(Math.random()*(max-2+1))+2; target=val; remaining=val; selection=[]; updateUI(); gamelog.textContent+='\nNew Target: '+target; }
-function pick(name,value,isDouble){ if(target===null){ alert('Press New Target'); return; } if(selection.length>=3){ alert('Already picked 3 darts'); return; } selection.push({name,value,isDouble}); remaining -= value; updateUI(); }
-function updateUI(){ targetDisplay.textContent=target===null?'—':target; remainingEl.textContent=remaining===null?'—':Math.max(0,remaining); selectionEl.textContent=selection.length?selection.map((s,i)=>`${i+1}. ${s.name} (${s.value}) — rem: ${Math.max(0,target - selection.slice(0,i+1).reduce((a,b)=>a+b.value,0) )}`).join('\n'):'(no darts yet)'; }
-function undo(){ if(!selection.length) return; const last=selection.pop(); remaining+=last.value; updateUI(); }
-function clearSelection(){ selection=[]; remaining=target; updateUI(); }
-
-function revealStandard(){ if(target===null){ alert('Press New Target'); return; } // get strategies
-  const strat = strategySel.value; let routes = standardOuts[target]; if(!routes){ routes = computeOuts(target); } // ensure array of routes
-  // apply strategy filters
-  if(strat === 'bull-first'){ routes = routes.filter(r => r[0] === 'SB' || r[0] === 'DB' || r[0].startsWith('T') === false); }
-  if(strat === 'treble-first'){ routes = routes.filter(r => r[0] && r[0].startsWith('T')); if(routes.length===0) routes = computeOuts(target).filter(r=>r[0] && r[0].startsWith('T')); }
-  if(!routes || routes.length===0){ standardOutEl.innerHTML='No standard out (fallback computed)'; routes = computeOuts(target); }
-  // show upto 4
-  const maxShow = 4; const shown = routes.slice(0,maxShow);
-  standardOutEl.innerHTML = shown.map((r,idx)=>`<div style="padding:6px;border-radius:6px;background:rgba(255,255,255,0.01);margin-bottom:6px"><strong>Option ${idx+1}:</strong> ${r.join(', ')} <button onclick="highlightRoute(${idx})" style="margin-left:8px;padding:4px 8px;border-radius:6px;background:var(--accent);border:none;cursor:pointer">Show on board</button></div>`).join('');
-  // store lastRoutes for highlighting
-  window._lastRoutes = shown;
-}
-
-function highlightRoute(idx){ const routes = window._lastRoutes || []; const r = routes[idx]; if(!r) return; // clear previous
-  clearHighlights(); // map names to elements and highlight
-  for(let name of r){ // find seg element by textContent
-    // handle numeric single like '20' or 'DB' etc
-    let query = null;
-    if(name === 'DB' || name === 'SB') query = `[data-name="${name}"]`;
-    else if(/^\d+$/.test(name)) query = `[data-name="S${name}"]`;
-    else query = `[data-name="${name}"]`;
-    const el = document.querySelector(query);
-    if(el){ el.classList.add('highlight'); }
-  }
-  // fade others
-  document.querySelectorAll('.seg').forEach(s => { if(!s.classList.contains('highlight')) s.classList.add('fade'); });
-  // animate for accessibility: scroll into view quick
-  setTimeout(()=>{ document.querySelectorAll('.highlight')[0]?.scrollIntoView({behavior:'smooth',block:'center'}); },50);
-}
-function clearHighlights(){ document.querySelectorAll('.seg.highlight').forEach(s=>s.classList.remove('highlight')); document.querySelectorAll('.seg.fade').forEach(s=>s.classList.remove('fade')); }
-
-function checkRoute(){ if(target===null){ alert('Press New Target'); return; } // evaluate selection vs routes
-  const chosen = selection.map(s=>s.name);
-  let routes = standardOuts[target] || computeOuts(target);
-  // compare exact matches
-  const exact = routes.find(r => r.join(',') === chosen.join(','));
-  if(exact){ gamelog.textContent += '\nExact match!'; clearHighlights(); highlightNames(exact); alert('Exact match — great!'); saveStat(true); return; }
-  // check legal finish
-  const sum = selection.reduce((a,b)=>a+b.value,0);
-  if(sum === target){ const last = selection[selection.length-1]; if(last && last.isDouble){ gamelog.textContent += '\nLegal finish but different route'; alert('Legal finish but differs from main suggested route.'); saveStat(false); highlightNames(routes[0]); } else { gamelog.textContent += '\nIllegal finish (not double)'; alert('You reached 0 but last dart is not a double — invalid finish.'); } return; }
-  // not matching
-  gamelog.textContent += '\nNo match — see suggestions'; alert('Not a standard checkout route. See suggested routes.'); revealStandard(); saveStat(false);
-}
-
-function highlightNames(route){ clearHighlights(); for(let name of route){ let query=null; if(name==='DB'||name==='SB') query=`[data-name="${name}"]`; else if(/^\d+$/.test(name)) query=`[data-name="S${name}"]`; else query=`[data-name="${name}"]`; const el=document.querySelector(query); if(el) el.classList.add('highlight'); } document.querySelectorAll('.seg').forEach(s=>{ if(!s.classList.contains('highlight')) s.classList.add('fade'); }); }
-
-// Stats to localStorage
-function saveStat(correct){ const key='darts_stats_v1'; const data = JSON.parse(localStorage.getItem(key)||'{}'); data.attempts = (data.attempts||0)+1; if(correct) data.correct = (data.correct||0)+1; localStorage.setItem(key, JSON.stringify(data)); }
-
-// init
-newTarget();
-    <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-</script></body>
+</body>
 </html>
