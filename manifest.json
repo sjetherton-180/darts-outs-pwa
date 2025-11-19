@@ -1,26 +1,29 @@
 {
-  "name": "Darts Outs Trainer",
-  "short_name": "DartsOuts",
-  "description": "A PWA for practicing darts checkout routes.",
-  "start_url": "/",
-  "scope": "/",
+  "name": "Checkout Master 170",
+  "short_name": "CM170",
+  "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "theme_color": "#111111",
+  "background_color": "#111111",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/icons/maskable-icon-512.png",
+      "src": "assets/icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
