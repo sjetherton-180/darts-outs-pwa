@@ -1,0 +1,1 @@
+const checkoutRoutes={170:['T20','T20','Bull'],167:['T20','T19','Bull'],164:['T20','T18','Bull'],161:['T20','T17','Bull']};function getRandomCheckout(){const k=Object.keys(checkoutRoutes);const p=k[Math.floor(Math.random()*k.length)];return{score:p,route:checkoutRoutes[p]}};window.getRandomCheckout=getRandomCheckout;
