@@ -1,0 +1,28 @@
+
+:root{
+  --bg:#071021;
+  --card:#0b1220;
+  --accent:#ffd166;
+  --muted:#94a3b8;
+  --white:#e6eef8;
+}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#071021,#07142a);color:var(--white)}
+main{background:rgba(255,255,255,0.02);border-radius:12px;padding:18px}
+#interactive-dartboard{max-width:520px;width:100%;height:auto;display:block}
+/* Highlight styles for clicked segments */
+#interactive-dartboard path.highlight, #interactive-dartboard circle.highlight {
+  filter: drop-shadow(0 8px 22px rgba(255,209,102,0.18));
+  transform-origin: 50% 50%;
+  transition: transform 160ms ease, opacity 160ms ease;
+  transform: scale(1.04);
+  opacity: 1;
+}
+#interactive-dartboard path:hover, #interactive-dartboard circle:hover {
+  opacity: 0.88;
+  cursor: pointer;
+}
+/* subtle fade for non-highlighted pieces while highlight active */
+#interactive-dartboard .faded { opacity: 0.36; transition: opacity 140ms ease; }
+.numbers text { font-family: Arial, Helvetica, sans-serif; font-weight:700; fill:#ffffff; text-shadow: 0 1px 0 rgba(0,0,0,0.6); }
+/* responsive container */
+#dartboard-root { padding: 12px; }
