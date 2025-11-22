@@ -1,1 +1,23 @@
-const pages=document.querySelectorAll('.page');const navButtons=document.querySelectorAll('.nav-btn');navButtons.forEach(btn=>{btn.addEventListener('click',()=>{const t=btn.dataset.page;pages.forEach(p=>p.classList.remove('active'));document.getElementById(t).classList.add('active')})});document.getElementById('startTrainer').onclick=()=>{const t=getRandomCheckout();window.currentCheckout=t;document.getElementById('trainerDisplay').textContent='Your target: '+t.score};document.getElementById('showAnswer').onclick=()=>{if(!window.currentCheckout)return;document.getElementById('trainerDisplay').textContent='Route: '+window.currentCheckout.route.join(' → ')};
+let trainerInput = [];
+
+window.pickThrow = function(name, score, isDouble) {
+    document.getElementById("lastHit").textContent = name;
+    trainerInput.push(name);
+    updateCurrentInputDisplay();
+};
+
+function updateCurrentInputDisplay() {
+    document.getElementById("currentInput").textContent =
+        trainerInput.length ? trainerInput.join(" → ") : "No darts selected";
+}
+
+document.getElementById("checkRouteBtn").addEventListener("click", () => {
+    const correctRoute = ["T20", "T20", "D20"]; // example for 120
+    const result = JSON.stringify(trainerInput) === JSON.stringify(correctRoute);
+
+    document.getElementById("trainerResult").textContent =
+        result ? "✅ Correct checkout!" : "❌ Not the optimal finish.";
+
+    trainerInput = [];
+    updateCurrentInputDisplay();
+});
