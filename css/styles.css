@@ -1,38 +1,72 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f0f0f;
-    color: #eee;
-    text-align: center;
+:root{
+  --bg: #0b0b0b;
+  --card: #0f1720;
+  --accent: #f59e0b;
+  --muted: #94a3b8;
 }
-
-header {
-    padding: 20px;
-    background: #181818;
-    border-bottom: 2px solid #222;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background: linear-gradient(180deg,#071028 0%, #071422 100%);
+  color:#e6eef7;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
-
-output, .output {
-    font-size: 1.5em;
-    margin: 10px;
+main{max-width:920px;margin:28px auto;padding:20px}
+h1{font-size:1.25rem;margin:0 0 14px}
+.board-area{
+  position:relative;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,0.02);
+  border-radius:14px;
+  padding:18px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
 }
-
-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: none;
-    background: #2c7df0;
-    color: white;
-    cursor: pointer;
+canvas#dartboard{
+  width:480px;
+  height:480px;
+  max-width:72vw;
+  max-height:72vw;
+  background:transparent;
+  border-radius:50%;
+  touch-action:none;
+  user-select:none;
+  display:block;
 }
-
-button.hidden {
-    display: none;
+.overlay{
+  position:absolute;
+  right:18px;
+  top:18px;
+  width:180px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-end;
 }
-
-#dartboard-wrapper {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+#result{
+  background:rgba(255,255,255,0.04);
+  padding:10px 12px;
+  border-radius:8px;
+  min-width:140px;
+  text-align:center;
+  font-weight:600;
+  color:var(--accent);
+}
+label.debug{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:0.9rem;
+}
+.instructions{margin-top:14px;color:var(--muted);font-size:0.95rem}
+code{background:rgba(255,255,255,0.02);padding:2px 6px;border-radius:4px;color:#cbd5e1}
+@media (max-width:520px){
+  .overlay{position:static;align-items:center;order:2}
+  .board-area{flex-direction:column;gap:12px}
 }
