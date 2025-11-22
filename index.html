@@ -1,55 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Checkout Master 170</title>
-
-    <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/dartboard.css" />
-
-    <link rel="icon" type="image/png" href="assets/icons/icon-192.png">
-    <meta name="theme-color" content="#101010" />
-
-    <script src="js/dartboard.js" defer></script>
-    <script src="js/app.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Darts Outs — Clickable Board (Fixed)</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-    <header>
-        <h1>Checkout Master 170</h1>
-        <button id="installBtn" class="hidden">Install App</button>
-    </header>
+  <main>
+    <h1>Darts Outs — Clickable Board</h1>
 
-    <main>
-        <section id="trainer">
-            <h2>Checkout Trainer</h2>
-            <p>Enter the best finishing route by clicking the dartboard.</p>
-            <div id="currentInput"></div>
-            <button id="checkRouteBtn">Check Route</button>
-            <div id="trainerResult"></div>
-        </section>
+    <section class="board-area">
+      <canvas id="dartboard" aria-label="Dartboard" role="img"></canvas>
+      <div class="overlay">
+        <div id="result">Click the board</div>
+        <label class="debug">
+          <input type="checkbox" id="debugToggle" />
+          Debug (show angle & distance)
+        </label>
+      </div>
+    </section>
 
-        <section id="dartboard-wrapper">
-            <div id="dartboard-container"></div>
-        </section>
+    <section class="instructions">
+      <p>Click or tap anywhere on the dartboard. The app reports the sector (1–20) and ring type (inner-bull, outer-bull, triple, double, single, miss).</p>
+      <p>To tune the board to your graphic, open <code>board.js</code> and adjust the radii fractions in <code>DEFAULT_RADII</code>.</p>
+    </section>
+  </main>
 
-        <section>
-            <h2>Last Hit:</h2>
-            <div id="lastHit" class="output">—</div>
-        </section>
-    </main>
-
-    <footer>
-        <p>PWA Version 1.0</p>
-    </footer>
-
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-          window.renderDartboard("dartboard-container");
-      });
-    </script>
+  <script src="board.js"></script>
 </body>
 </html>
